@@ -6,17 +6,47 @@ export class News extends Component {
   constructor() {
     super();
     this.state = {
+      totalResults: 0,
       articles: [],
       loading: true,
+      page: 1,
+      maxPages: 0,
     };
   }
 
-  async componentDidMount() {
-    // let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`;
+  fetchData = async (navigate) => {
+    // this.setState({
+    //   page: this.state.page + navigate,
+    // });
+    // let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${this.state.page}&pageSize=20`;
     // let data = await fetch(url);
     // let parsedData = await data.json();
-    // this.setState({ articles: parsedData.articles });
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   loading: false,
+    //   totalResults: parsedData.totalResults,
+    // });
+  };
+
+  componentDidMount() {
+    this.fetchData(0);
+    this.setState({
+      maxPages: Math.ceil(this.state.totalResults / 20),
+    });
   }
+
+  onNextPage = () => {
+    if (this.state.page + 1 > this.state.maxPages) {
+      // if there is no next page
+    } else {
+      this.state.loading = true;
+      this.fetchData(1);
+    }
+  };
+  onPrevPage = () => {
+    this.state.loading = true;
+    this.fetchData(-1);
+  };
 
   render() {
     return (
@@ -67,6 +97,24 @@ export class News extends Component {
                 </div>
               );
             })}
+          </div>
+          <div className="d-flex justify-content-between mx-2">
+            <button
+              type="button"
+              disabled={this.state.page <= 1}
+              onClick={this.onPrevPage}
+              className="btn btn-primary"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              disabled={this.state.page + 1 > this.state.maxPages}
+              onClick={this.onNextPage}
+              className="btn btn-primary"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
