@@ -5,34 +5,44 @@ export class NewsItemPlaceholder extends Component {
     return (
       <div>
         <div
-          className="card my-4 mx-2"
+          className={`card bg-${this.props.mode} border my-4 mx-2`}
           aria-hidden="true"
-          style={{ width: "18rem" }}
         >
           <div
             className="container"
             style={{
-              width: "288px",
+              width: "100%",
               height: "148px",
               backgroundColor: "lightgray",
             }}
           ></div>
           <div className="card-body">
-            <h5 className="card-title placeholder-glow">
+            <h5
+              className={`card-text placeholder-glow text-${
+                this.props.mode === "light" ? "dark" : "light"
+              }`}
+            >
               <span className="placeholder col-6"></span>
             </h5>
-            <p className="card-text placeholder-glow">
+            <p
+              className={`card-text placeholder-glow text-${
+                this.props.mode === "light" ? "dark" : "light"
+              }`}
+            >
               <span className="placeholder col-7"></span>
               <span className="placeholder col-4"></span>
               <span className="placeholder col-4"></span>
               <span className="placeholder col-6"></span>
               <span className="placeholder col-8"></span>
             </p>
-            <a
-              href=""
+            <p
               tabIndex="-1"
-              className="btn btn-primary disabled placeholder col-6"
-            ></a>
+              className="btn btn-outline-danger btn-danger btn-sm  col-6 mb-1"
+              style={{
+                width: "100%",
+                height: "40px",
+              }}
+            ></p>
           </div>
         </div>
       </div>
