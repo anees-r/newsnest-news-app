@@ -1,13 +1,8 @@
 import React, { Component } from "react";
-import lightIcon from "../icons/icon-light.png";
-import darkIcon from "../icons/icon-dark.png";
+import newsNestIcon from "../icons/icon-danger.png";
 import { Link } from "react-router";
 
 export class Navbar extends Component {
-  // onQueryChange = (event) => {
-  //   this.props.onQueryChange(event.target.value);
-  //   console.log(event.target.value);
-  // };
   render() {
     return (
       <div>
@@ -17,7 +12,7 @@ export class Navbar extends Component {
           <div className="container-fluid">
             <Link to="/" style={{ cursor: "pointer", textDecoration: "none" }}>
               <img
-                src={this.props.mode === "light" ? lightIcon : darkIcon}
+                src={newsNestIcon}
                 alt=""
                 style={{ height: "30px", width: "30px" }}
               />

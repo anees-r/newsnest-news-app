@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import News from "./components/News";
+import Welcome from "./components/Welcome";
 
 export default class App extends Component {
   constructor() {
@@ -14,12 +15,6 @@ export default class App extends Component {
       mode: "light",
     };
   }
-
-  // onQueryChange = (newQuery) => {
-  //   this.setState = {
-  //     query: newQuery,
-  //   };
-  // };
 
   toggleMode = () => {
     if (this.state.mode === "light") {
@@ -48,8 +43,18 @@ export default class App extends Component {
             }}
             query={this.state.query}
           />
+
           <Routes>
-            <Route exact path="/" element={<Home mode={this.state.mode} />} />
+            <Route
+              exact
+              path="/"
+              element={
+                <>
+                  <Welcome mode={this.state.mode} />
+                  <Home mode={this.state.mode} />
+                </>
+              }
+            />
             <Route
               exact
               path="/business"
@@ -58,6 +63,7 @@ export default class App extends Component {
                   category="business"
                   pageSize="20"
                   mode={this.state.mode}
+                  title="Category - NewsNest"
                 />
               }
             />
@@ -69,6 +75,7 @@ export default class App extends Component {
                   category="entertainment"
                   pageSize="20"
                   mode={this.state.mode}
+                  title="Category - NewsNest"
                 />
               }
             />
@@ -76,21 +83,36 @@ export default class App extends Component {
               exact
               path="/health"
               element={
-                <News category="health" pageSize="20" mode={this.state.mode} />
+                <News
+                  category="health"
+                  pageSize="20"
+                  mode={this.state.mode}
+                  title="Category - NewsNest"
+                />
               }
             />
             <Route
               exact
               path="/science"
               element={
-                <News category="science" pageSize="20" mode={this.state.mode} />
+                <News
+                  category="science"
+                  pageSize="20"
+                  mode={this.state.mode}
+                  title="Category - NewsNest"
+                />
               }
             />
             <Route
               exact
               path="/sports"
               element={
-                <News category="sports" pageSize="20" mode={this.state.mode} />
+                <News
+                  category="sports"
+                  pageSize="20"
+                  mode={this.state.mode}
+                  title="Category - NewsNest"
+                />
               }
             />
             <Route
@@ -101,6 +123,7 @@ export default class App extends Component {
                   category="technology"
                   pageSize="20"
                   mode={this.state.mode}
+                  title="Category - NewsNest"
                 />
               }
             />
@@ -114,6 +137,7 @@ export default class App extends Component {
                     pageSize="20"
                     query={`&q=${this.state.query}`}
                     mode={this.state.mode}
+                    title={`'${this.state.query}' - NewsNest`}
                   />
                 }
               />

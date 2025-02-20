@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import NewsItem from "./NewsItem";
 import NewsItemPlaceholder from "./NewsItemPlaceholder";
+import NextIcon from "../icons/next-icon.png";
+import PrevIcon from "../icons/prev-icon.png";
 
 export class News extends Component {
   constructor() {
@@ -15,6 +17,7 @@ export class News extends Component {
 
   static defaultProps = {
     query: "",
+    title: "NewsNest - Home",
   };
 
   fetchData = async (navigate) => {
@@ -34,7 +37,7 @@ export class News extends Component {
 
   async componentDidMount() {
     await this.fetchData(0);
-    console.log(this.props.query);
+    document.title = this.props.title;
   }
 
   onNextPage = async () => {
@@ -61,7 +64,7 @@ export class News extends Component {
       <>
         <div className="container">
           <h4
-            className={`mb-3 mt-5 text-${
+            className={`mb-3 mt-2 text-${
               this.props.mode === "light" ? "dark" : "light"
             }`}
           >
@@ -69,7 +72,7 @@ export class News extends Component {
               ? "Top-Headlines"
               : `Top-${this.capitalize(this.props.category)}-Headlines`}
           </h4>
-          <div className="container border mt-y3" style={{ borderRadius: 20 }}>
+          <div className="container border mb-5" style={{ borderRadius: 20 }}>
             <div className="row">
               {this.state.loading && (
                 <div>
@@ -121,14 +124,26 @@ export class News extends Component {
             <div className="d-flex justify-content-between mx-2 mb-4">
               <button
                 type="button"
+                style={{
+                  width: "100px",
+                }}
                 disabled={this.state.page <= 1}
                 onClick={this.onPrevPage}
                 className="btn  btn-danger"
               >
-                Previous
+                <img
+                  src={PrevIcon}
+                  alt="Previous"
+                  style={{
+                    height: "25px",
+                  }}
+                />
               </button>
               <button
                 type="button"
+                style={{
+                  width: "100px",
+                }}
                 disabled={
                   this.state.page + 1 >
                   Math.ceil(this.state.totalResults / this.props.pageSize)
@@ -136,7 +151,13 @@ export class News extends Component {
                 onClick={this.onNextPage}
                 className="btn  btn-danger"
               >
-                Next
+                <img
+                  src={NextIcon}
+                  alt="Next"
+                  style={{
+                    height: "25px",
+                  }}
+                />
               </button>
             </div>
           </div>
