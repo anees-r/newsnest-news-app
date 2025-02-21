@@ -1,104 +1,76 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import NewsItem from "./NewsItem";
-import NewsItemPlaceholder from "./NewsItemPlaceholder";
-import NextIcon from "../icons/next-icon.png";
-import PrevIcon from "../icons/prev-icon.png";
+import Loader from "./Loader";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-export class News extends Component {
-  constructor() {
-    super();
-    this.state = {
-      totalResults: 0,
-      articles: [],
-      loading: true,
-      page: 1,
-    };
-  }
+const News = ({
+  query = "",
+  title = "NewsNest - Home",
+  category,
+  setNewProgress,
+  pageSize,
+  mode,
+  welcomePage = false,
+}) => {
+  const [totalResults, setTotalResults] = useState(0);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
-  static defaultProps = {
-    query: "",
-    title: "NewsNest - Home",
+  const fetchData = async () => {
+    await setPage(page + 1);
+    setNewProgress(30);
+    let url = `https://newsapi.org/v2/top-headlines?category=${category}${query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${page}&pageSize=${pageSize}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    setNewProgress(60);
+    setArticles(articles.concat(parsedData.articles));
+    setLoading(false);
+    setTotalResults(parsedData.totalResults);
+    setNewProgress(100);
   };
 
-  fetchData = async (navigate) => {
-    // the buttons were not navigating properly so i had to add await so it sets new page number first and then fetches it
-    // await this.setState({
-    //   page: this.state.page + navigate,
-    // });
-    // let url = `https://newsapi.org/v2/top-headlines?category=${this.props.category}${this.props.query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-    // let data = await fetch(url);
-    // let parsedData = await data.json();
-    // this.setState({
-    //   articles: parsedData.articles,
-    //   loading: false,
-    //   totalResults: parsedData.totalResults,
-    // });
+  const fetchNewData = async () => {
+    await setPage(page + 1);
+    let url = `https://newsapi.org/v2/top-headlines?category=${category}${query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${page}&pageSize=${pageSize}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    setArticles(articles.concat(parsedData.articles));
+    setLoading(false);
+    setTotalResults(parsedData.totalResults);
   };
 
-  async componentDidMount() {
-    await this.fetchData(0);
-    document.title = this.props.title;
-  }
+  useEffect(() => {
+    fetchData();
+    document.title = title;
+  }, []);
 
-  onNextPage = async () => {
-    await this.setState({
-      loading: true,
-    });
-    this.fetchData(1);
-    // document.documentElement.scrollTop = 0;
-  };
-  onPrevPage = async () => {
-    await this.setState({
-      loading: true,
-    });
-    this.fetchData(-1);
-    // document.documentElement.scrollTop = 0;
-  };
-
-  capitalize = (word) => {
+  const capitalize = (word) => {
     return word[0].toUpperCase() + word.slice(1);
   };
+  return (
+    <>
+      <div className="container">
+        <h4
+          className={` text-${mode === "light" ? "dark" : "light"}`}
+          style={{ marginTop: "90px" }}
+        >
+          {category === "general"
+            ? "Top-Headlines"
+            : `Top-${capitalize(category)}-Headlines`}
+        </h4>
 
-  render() {
-    return (
-      <>
-        <div className="container">
-          <h4
-            className={`mb-3 mt-2 text-${
-              this.props.mode === "light" ? "dark" : "light"
-            }`}
-          >
-            {this.props.category === "general"
-              ? "Top-Headlines"
-              : `Top-${this.capitalize(this.props.category)}-Headlines`}
-          </h4>
-          <div className="container border mb-5" style={{ borderRadius: 20 }}>
+        <InfiniteScroll
+          dataLength={articles.length} //This is important field to render the next data
+          next={fetchNewData}
+          hasMore={articles.length !== totalResults}
+          loader={!welcomePage && <Loader mode={mode} />}
+        >
+          <div className="container" style={{ borderRadius: 20 }}>
             <div className="row">
-              {this.state.loading && (
-                <div>
-                  <div className="row">
-                    <div className="col-md-3 my-2">
-                      <NewsItemPlaceholder mode={this.props.mode} />
-                    </div>
-                    <div className="col-md-3 my-2">
-                      <NewsItemPlaceholder mode={this.props.mode} />
-                    </div>
-                    <div className="col-md-3 my-2">
-                      <NewsItemPlaceholder mode={this.props.mode} />
-                    </div>
-                    <div className="col-md-3 my-2">
-                      <NewsItemPlaceholder mode={this.props.mode} />
-                    </div>
-                  </div>
-                  {/* <div className="row mt-5 justify-content-center">
-                    <div className="spinner-border text-dark" role="status">
-                      <span className="sr-only"></span>
-                    </div>
-                  </div> */}
-                </div>
-              )}
-              {!this.state.loading &&
-                this.state.articles.map((element) => {
+              {loading && <Loader mode={mode} />}
+              {!loading &&
+                articles.map((element) => {
                   return (
                     <div className="col-md-3 my-2" key={element.url}>
                       <NewsItem
@@ -114,57 +86,16 @@ export class News extends Component {
                         articleUrl={element.url ? element.url : ""}
                         date={new Date(element.publishedAt).toGMTString()}
                         source={element.source.name}
-                        mode={this.props.mode}
+                        mode={mode}
                       />
                     </div>
                   );
                 })}
             </div>
-
-            <div className="d-flex justify-content-between mx-2 mb-4">
-              <button
-                type="button"
-                style={{
-                  width: "100px",
-                }}
-                disabled={this.state.page <= 1}
-                onClick={this.onPrevPage}
-                className="btn  btn-danger"
-              >
-                <img
-                  src={PrevIcon}
-                  alt="Previous"
-                  style={{
-                    height: "25px",
-                  }}
-                />
-              </button>
-              <button
-                type="button"
-                style={{
-                  width: "100px",
-                }}
-                disabled={
-                  this.state.page + 1 >
-                  Math.ceil(this.state.totalResults / this.props.pageSize)
-                }
-                onClick={this.onNextPage}
-                className="btn  btn-danger"
-              >
-                <img
-                  src={NextIcon}
-                  alt="Next"
-                  style={{
-                    height: "25px",
-                  }}
-                />
-              </button>
-            </div>
           </div>
-        </div>
-      </>
-    );
-  }
-}
-
+        </InfiniteScroll>
+      </div>
+    </>
+  );
+};
 export default News;

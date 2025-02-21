@@ -1,157 +1,170 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import News from "./components/News";
 import Welcome from "./components/Welcome";
+import LoadingBar from "react-top-loading-bar";
 
-export default class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      query: "",
-      mode: "light",
-    };
-  }
+function App() {
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState("light");
+  const [progress, setProgress] = useState(0);
 
-  toggleMode = () => {
-    if (this.state.mode === "light") {
-      this.setState({
-        mode: "dark",
-      });
+  const toggleMode = () => {
+    if (mode === "light") {
+      setMode("dark");
+
       document.body.style.backgroundColor = "#212529";
     } else {
-      this.setState({
-        mode: "light",
-      });
+      setMode("light");
+
       document.body.style.backgroundColor = "#f8f9fa";
     }
   };
-  render() {
-    return (
-      <div>
-        <BrowserRouter>
-          <Navbar
-            mode={this.state.mode}
-            toggleMode={this.toggleMode}
-            onQueryChange={(e) => {
-              this.setState({
-                query: e.target.value,
-              });
-            }}
-            query={this.state.query}
-          />
 
-          <Routes>
-            <Route
-              exact
-              path="/"
-              element={
-                <>
-                  <Welcome mode={this.state.mode} />
-                  <Home mode={this.state.mode} />
-                </>
-              }
-            />
-            <Route
-              exact
-              path="/business"
-              element={
-                <News
-                  category="business"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            <Route
-              exact
-              path="/entertainment"
-              element={
-                <News
-                  category="entertainment"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            <Route
-              exact
-              path="/health"
-              element={
-                <News
-                  category="health"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            <Route
-              exact
-              path="/science"
-              element={
-                <News
-                  category="science"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            <Route
-              exact
-              path="/sports"
-              element={
-                <News
-                  category="sports"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            <Route
-              exact
-              path="/technology"
-              element={
-                <News
-                  category="technology"
-                  pageSize="20"
-                  mode={this.state.mode}
-                  title="Category - NewsNest"
-                />
-              }
-            />
-            {this.state.query !== "" && (
-              <Route
-                exact
-                path={`/query=${this.state.query}`}
-                element={
-                  <News
-                    category="general"
-                    pageSize="20"
-                    query={`&q=${this.state.query}`}
-                    mode={this.state.mode}
-                    title={`'${this.state.query}' - NewsNest`}
-                  />
-                }
+  const setNewProgress = (prog) => {
+    setProgress(prog);
+  };
+
+  return (
+    <div>
+      <BrowserRouter>
+        <LoadingBar
+          color="#dc3545"
+          progress={progress}
+          onLoaderFinished={() => {}}
+        />
+        <Navbar
+          mode={mode}
+          toggleMode={toggleMode}
+          onQueryChange={(e) => {
+            setQuery(e.target.value);
+          }}
+          query={query}
+        />
+
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <>
+                <Welcome mode={mode} />
+                <Home mode={mode} setNewProgress={setNewProgress} />
+              </>
+            }
+          />
+          <Route
+            exact
+            path="/business"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="business"
+                category="business"
+                pageSize="12"
+                mode={mode}
+                title="Business - NewsNest"
               />
-            )}
-            {this.state.query === "" && (
-              <Route
-                exact
-                path={"/query"}
-                element={<Home mode={this.state.mode} />}
+            }
+          />
+          <Route
+            exact
+            path="/entertainment"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="entertainment"
+                category="entertainment"
+                pageSize="12"
+                mode={mode}
+                title="Entertainment - NewsNest"
               />
-            )}
-          </Routes>
-        </BrowserRouter>
-      </div>
-    );
-  }
+            }
+          />
+          <Route
+            exact
+            path="/health"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="health"
+                category="health"
+                pageSize="12"
+                mode={mode}
+                title="Health - NewsNest"
+              />
+            }
+          />
+          <Route
+            exact
+            path="/science"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="science"
+                category="science"
+                pageSize="12"
+                mode={mode}
+                title="Science - NewsNest"
+              />
+            }
+          />
+          <Route
+            exact
+            path="/sports"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="sports"
+                category="sports"
+                pageSize="12"
+                mode={mode}
+                title="Sports - NewsNest"
+              />
+            }
+          />
+          <Route
+            exact
+            path="/technology"
+            element={
+              <News
+                setNewProgress={setNewProgress}
+                key="technology"
+                category="technology"
+                pageSize="12"
+                mode={mode}
+                title="Technology - NewsNest"
+              />
+            }
+          />
+          {query !== "" && (
+            <Route
+              exact
+              path={`/query=${query}`}
+              element={
+                <News
+                  setNewProgress={setNewProgress}
+                  key={`&q=${query}`}
+                  category="general"
+                  pageSize="12"
+                  query={`&q=${query}`}
+                  mode={mode}
+                  title={`'${query}' - NewsNest`}
+                />
+              }
+            />
+          )}
+          {query === "" && (
+            <Route exact path={"/query"} element={<Home mode={mode} />} />
+          )}
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
+
+export default App;
